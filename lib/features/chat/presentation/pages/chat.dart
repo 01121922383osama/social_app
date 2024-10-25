@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_app/ecport_injection.dart';
@@ -118,11 +119,7 @@ class _ChatState extends State<Chat> {
                                     timeSpam: DateTime.now(),
                                   ),
                                 );
-                            FirebaseFirestore.instance
-                                .collection(AppStrings.chatFireStoreKey)
-                                .add({
-                              'lastMessage': _controller.text.trim(),
-                            });
+
                             _controller.clear();
                             _scrollController.animateTo(
                               _scrollController.position.maxScrollExtent + 50,
