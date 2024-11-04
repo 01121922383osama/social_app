@@ -36,19 +36,6 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
         email: email,
         password: password,
       );
-      // osama@gmail.com => [osama , @gmail.com]
-      final user = UserModel(
-        userId: userCredential.user!.uid,
-        name: userCredential.user!.email!.split('@')[0],
-        email: userCredential.user!.email,
-        photoUrl:
-            'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
-      );
-      await _firestore
-          .collection(AppStrings.userFireStoreKey)
-          .doc(userCredential.user!.email!)
-          .set(user.toJson());
-
       return userCredential.user!.uid;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {

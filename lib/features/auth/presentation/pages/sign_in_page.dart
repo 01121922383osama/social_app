@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:social_app/config/Routes/name_routes.dart';
 import 'package:social_app/core/extension/navgator.dart';
+import 'package:social_app/features/setting/presentation/cubit/setting_cubit.dart';
 
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/custom_showtoast.dart';
@@ -121,6 +122,7 @@ class SignInPage extends StatelessWidget {
                           )
                           .then((value) {
                         if (context.mounted) {
+                          context.read<SettingCubit>().getUserData();
                           customShowtoast(
                             context,
                             message: 'Login Success',

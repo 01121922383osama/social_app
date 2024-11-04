@@ -1,14 +1,27 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:social_app/features/chat/domain/usecases/create_or_getchat_usecase.dart';
 import 'package:social_app/features/chat/domain/usecases/get_stream_message_usecase.dart';
 import 'package:social_app/features/chat/domain/usecases/sen_message_usecase.dart';
 import 'package:social_app/features/chat/presentation/manager/creatChat/creat_chat_cubit.dart';
 import 'package:social_app/features/chat/presentation/manager/sendMessage/send_message_cubit.dart';
+import 'package:social_app/firebase_options.dart';
 
 import 'ecport_injection.dart';
 
 final getIt = GetIt.instance;
+FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+FirebaseAnalyticsObserver observer =
+    FirebaseAnalyticsObserver(analytics: analytics);
 
 Future<void> init() async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  // init firebase message
+  await FirebaseMessaging.instance.getInitialMessage();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   // others hive
   await Hive.initFlutter();
   Hive.registerAdapter(PostModelAdapter());
@@ -108,4 +121,9 @@ Future<void> init() async {
   getIt.registerLazySingleton(() => InternetConnectionChecker());
   getIt.registerLazySingleton<NetworkInfo>(
       () => NetworkInfoImpl(connectionChecker: getIt.call()));
+}
+
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
 }

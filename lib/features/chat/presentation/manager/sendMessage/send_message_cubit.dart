@@ -12,7 +12,7 @@ class SendMessageCubit extends Cubit<SendMessageState> {
   })  : _messageUsecase = messageUsecase,
         super(const SendMessageInitial());
 
-  void sendMessage({
+  Future<void> sendMessage({
     required String chatId,
     required MessageModel message,
   }) async {

@@ -10,9 +10,14 @@ import 'package:social_app/features/auth/data/models/user_models.dart';
 
 abstract class SettingRemoteDataSource {
   Future<Either<FialureServer, UserModel>> getUserData();
-  Future<Either<FialureServer, void>> updateUserData({required UserModel user});
-  Future<Either<FialureServer, String>> ulpoadeImage(
-      {required String userId, required File file, required String path});
+  Future<Either<FialureServer, void>> updateUserData({
+    required UserModel user,
+  });
+  Future<Either<FialureServer, String>> ulpoadeImage({
+    required String userId,
+    required File file,
+    required String path,
+  });
 }
 
 class SettingRemoteDataSourceImpl implements SettingRemoteDataSource {

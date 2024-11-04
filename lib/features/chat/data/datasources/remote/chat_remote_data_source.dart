@@ -60,7 +60,8 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
         .orderBy('timeSpam', descending: true)
         .snapshots()
         .map((snapchot) => snapchot.docs.map((docs) {
-              return MessageModel.fromJson(docs.data());
+              final message = MessageModel.fromJson(docs.data());
+              return message;
             }).toList());
   }
 

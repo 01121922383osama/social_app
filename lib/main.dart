@@ -1,6 +1,6 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:social_app/core/services/notification_services.dart';
 import 'package:social_app/features/chat/presentation/manager/creatChat/creat_chat_cubit.dart';
 import 'package:social_app/features/chat/presentation/manager/cubit/chat_cubit.dart';
 import 'package:social_app/features/chat/presentation/manager/sendMessage/send_message_cubit.dart';
@@ -15,15 +15,12 @@ import 'config/Routes/name_routes.dart';
 import 'features/app/presentation/cubit/trigger/trigger_cubit.dart';
 import 'features/auth/presentation/cubit/Toggle/toggle.dart';
 import 'features/auth/presentation/cubit/auth_cubit.dart';
-import 'firebase_options.dart';
 import 'injection.dart' as di;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await di.init();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await NotificationService().requestPermission();
   runApp(const MyApp());
 }
 

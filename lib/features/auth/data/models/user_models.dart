@@ -6,12 +6,14 @@ class UserModel {
   final String name;
   final String? email;
   final String? photoUrl;
+  final String? lastMessage;
 
   UserModel({
     required this.userId,
     required this.name,
     required this.email,
     required this.photoUrl,
+    this.lastMessage,
   });
   factory UserModel.fromSnapShot(DocumentSnapshot snapshot) {
     return UserModel(
@@ -19,6 +21,7 @@ class UserModel {
       name: snapshot.get('name'),
       email: snapshot.get('email'),
       photoUrl: snapshot.get('photo_url'),
+      lastMessage: snapshot.get('last_message'),
     );
   }
 
@@ -27,6 +30,7 @@ class UserModel {
         'name': name,
         'email': email,
         'photo_url': photoUrl,
+        'last_message': lastMessage,
       };
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
@@ -35,6 +39,7 @@ class UserModel {
       name: map['name'],
       email: map['email'],
       photoUrl: map['photo_url'],
+      lastMessage: map['last_message'],
     );
   }
 }

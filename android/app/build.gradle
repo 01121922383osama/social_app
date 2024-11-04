@@ -10,7 +10,7 @@ plugins {
 
 android {
     namespace = "com.example.social_app"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 34
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -45,4 +45,8 @@ android {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+  coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
 }

@@ -33,47 +33,53 @@ class BodyChatPage extends StatelessWidget {
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(10)),
                 ),
-                child: ListTile(
-                  onTap: () {
-                    context
-                        .read<CreatChatCubit>()
-                        .createChat(
-                          userId1: FirebaseAuth.instance.currentUser!.uid,
-                          userId2: user.userId,
-                        )
-                        .then((chatId) {
-                      if (context.mounted) {
-                        context.push(
-                            widget: Chat(
-                          chatid: chatId,
-                          userModel: user,
-                        ));
-                      }
-                    });
-                  },
-                  dense: true,
-                  leading: CachedNetworkImage(
-                    imageUrl: user.photoUrl!,
-                    imageBuilder: (context, imageProvider) {
-                      return CircleAvatar(
-                        radius: 30,
-                        backgroundImage: imageProvider,
-                      );
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListTile(
+                    dense: true,
+                    onTap: () {
+                      context
+                          .read<CreatChatCubit>()
+                          .createChat(
+                            userId1: FirebaseAuth.instance.currentUser!.uid,
+                            userId2: user.userId,
+                          )
+                          .then((chatId) {
+                        if (context.mounted) {
+                          context.push(
+                              widget: Chat(
+                            chatid: chatId,
+                            user2: user.email!,
+                            userModel: user,
+                          ));
+                        }
+                      });
                     },
-                    errorWidget: (context, url, error) {
-                      return const CircleAvatar(
-                        child: Icon(Icons.error),
-                      );
-                    },
-                  ),
-                  title: Text(
-                    user.name,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 18,
+                    leading: CachedNetworkImage(
+                      imageUrl: user.photoUrl!,
+                      imageBuilder: (context, imageProvider) {
+                        return CircleAvatar(
+                          radius: 30,
+                          backgroundImage: imageProvider,
+                        );
+                      },
+                      errorWidget: (context, url, error) {
+                        return const CircleAvatar(
+                          child: Icon(Icons.error),
+                        );
+                      },
                     ),
+                    title: Text(
+                      user.name,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                      ),
+                    ),
+                    subtitle: user.lastMessage?.isEmpty ?? true
+                        ? null
+                        : Text(user.lastMessage ?? ''),
                   ),
-                  subtitle: const Text('Last message'),
                 ),
               );
             },

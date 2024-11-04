@@ -1,6 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:social_app/core/services/notification_services.dart';
 import 'package:social_app/ecport_injection.dart';
 import 'package:social_app/features/auth/data/models/user_models.dart';
 import 'package:social_app/features/chat/data/models/message_mode.dart';
@@ -10,8 +12,14 @@ import 'package:social_app/features/chat/presentation/widgets/build_appbar_chat.
 
 class Chat extends StatefulWidget {
   final UserModel userModel;
+  final String user2;
   final String chatid;
-  const Chat({super.key, required this.userModel, required this.chatid});
+  const Chat({
+    super.key,
+    required this.userModel,
+    required this.chatid,
+    required this.user2,
+  });
 
   @override
   State<Chat> createState() => _ChatState();
@@ -20,6 +28,8 @@ class Chat extends StatefulWidget {
 class _ChatState extends State<Chat> {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final NotificationService _notificationService = NotificationService();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,6 +57,11 @@ class _ChatState extends State<Chat> {
                       itemCount: snapshot.data?.length ?? 0,
                       itemBuilder: (BuildContext context, int index) {
                         final reverseMessage = snapshot.data!.reversed.toList();
+                        _scrollController.animateTo(
+                          _scrollController.position.maxScrollExtent + 50,
+                          duration: const Duration(milliseconds: 250),
+                          curve: Curves.linear,
+                        );
                         return Container(
                           padding: const EdgeInsets.all(10),
                           margin: const EdgeInsets.all(5),
@@ -108,18 +123,36 @@ class _ChatState extends State<Chat> {
                         icon: const Icon(Icons.camera_alt),
                       ),
                       IconButton(
-                        onPressed: () {
+                        onPressed: () async {
                           if (_controller.text.isNotEmpty) {
-                            context.read<SendMessageCubit>().sendMessage(
-                                  chatId: widget.chatid,
-                                  message: MessageModel(
-                                    sendId:
-                                        FirebaseAuth.instance.currentUser!.uid,
-                                    message: _controller.text.trim(),
-                                    timeSpam: DateTime.now(),
-                                  ),
-                                );
-
+                            await FirebaseFirestore.instance
+                                .collection(AppStrings.userFireStoreKey)
+                                .doc(FirebaseAuth.instance.currentUser!.email)
+                                .update({
+                              'last_message': _controller.text.trim(),
+                            });
+                            await FirebaseFirestore.instance
+                                .collection(AppStrings.userFireStoreKey)
+                                .doc(widget.user2)
+                                .update({
+                              'last_message': _controller.text.trim(),
+                            });
+                            if (context.mounted) {
+                              context.read<SendMessageCubit>().sendMessage(
+                                    chatId: widget.chatid,
+                                    message: MessageModel(
+                                      sendId: FirebaseAuth
+                                          .instance.currentUser!.uid,
+                                      message: _controller.text.trim(),
+                                      timeSpam: DateTime.now(),
+                                    ),
+                                  );
+                              _notificationService.showLocalNotication(
+                                id: Random().nextInt(9999),
+                                title: widget.userModel.name,
+                                body: _controller.text.trim(),
+                              );
+                            }
                             _controller.clear();
                             _scrollController.animateTo(
                               _scrollController.position.maxScrollExtent + 50,
